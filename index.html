@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="pt_br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ColageGrid</title>
+
+    <!-- fontes -->
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" />
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap" rel="stylesheet" crossorigin="anonymous">
+
+    <!-- gridstack -->
+    <link href="node_modules/gridstack/dist/gridstack-extra.min.css" rel="stylesheet"/>
+    <script src="node_modules/gridstack/dist/gridstack-all.js"></script>
+    <link href="node_modules/gridstack/dist/gridstack.min.css" rel="stylesheet"/>
+
+    <!-- css -->
+    <link rel="stylesheet" href="style.css">
+
+    <!-- print -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/dom-to-image/2.6.0/dom-to-image.min.js" integrity="sha512-01CJ9/g7e8cUmY0DFTMcUw/ikS799FHiOA0eyHsUWfOetgbx/t6oV4otQ5zXKQyIrQGTHSmRVPIgrgLcZi/WMA==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/FileSaver.js/2.0.5/FileSaver.min.js" referrerpolicy="no-referrer"></script>
+
+<style type="text/css">
+
+</style>
+</head>
+<body>
+
+  <!-- Desenvolvido por Cézar Ranieri
+  inspirado por IconicLabs -->
+
+  <header>
+    <h1>ColageGrid</h1>
+      <div id="opcoes">
+        <span id="salv" onclick="salvar()"> <span class="material-symbols-outlined">download</span> Salvar</span>
+        <span id="opc"><div id="instrucoes">
+          <ul>
+            <p>Como usar:</p>
+            <li>Arraste as setas na borda para redimensionar</li>
+            <li>Clique no ícone do centro para alterar a imagem</li>
+            <li>Clique na parte inferior para adicionar texto</li>
+          </ul>
+        </div> <span class="material-symbols-outlined">help</span> Info</span>
+      </ul>     
+  </header>
+
+    <main>
+      <div id="maingrid">
+        <h2>ColageGrid</h2>
+        <input type="text" name="Titulo" id="tituloid" placeholder="Adicione um título">
+        <div class="grid-stack"></div>
+        <h3>colagegrid.netlify.app</h3>
+      </div>
+
+      <div id="criador">
+        <label for="colid">Número de linhas:</label>
+        <input type="number" class="innum" name="col" id="colid" min="1" max="8" placeholder="Max: 8" ><br>
+        <label for="linid">Número de colunas:</label>
+        <input type="number" class="innum" name="lin" id="linid" min="1" max="8" placeholder="Max: 8" ><br>
+        <input type="submit" id="botao" value="Criar" onclick='criar()'>
+      </div>
+
+      <div id="controles">
+        <input type="button" id="addbloco" value="Adicionar bloco" onclick="add()">
+        <div id="trash">
+          <span class="material-symbols-outlined">delete</span>
+          Arraste aqui para remover
+        </div>
+        <input type="button" id="removeall" value="Limpar tudo" onclick="removeall()">
+        <input type="button" id="deletegrid" value="Deletar grid" onclick="deletegrid()">
+        
+        <div id="setcores">
+          <div id="setcor1">
+            <label for="cor1">Cor 1</label>
+            <input type="color" name="cor1" id="cor1" onchange="mudarcor1()" value="#ffffff">
+          </div>
+          <div id="setcor2">
+            <label for="cor2">Cor 2</label>
+            <input type="color" name="cor2" id="cor2" onchange="mudarcor2()" value="#ffffff">
+          </div>
+          <div id="setcortitulo">
+            <label for="cortitulo">Cor titulo</label>
+            <input type="color" name="cortitulo" id="cortitulo" onchange="mudarcortitulo()" value="#616161">
+          </div>
+        </div>
+      </div>
+    </main>
+      
+<script type="text/javascript">
+  var numcol = document.getElementById('colid')
+  var numlin = document.getElementById('linid')
+
+  function salvar(){
+    var titulogrid = document.getElementById('tituloid')
+    titulogrid.style.transform = 'translateX(-10px)'
+    var node = document.getElementById('maingrid');
+    var scale = 2;
+    const style = {
+      transform: 'scale('+scale+')',
+      transformOrigin: 'top left',
+      width: node.offsetWidth + "px",
+      height: node.offsetHeight + "px",
+      borderRadius: '0px'
+    }
+    const param = {
+      height: node.offsetHeight * scale,
+      width: node.offsetWidth * scale,
+      quality: 1,
+      style
+    }
+    domtoimage.toBlob(node, param)
+        .then(function (blob) {
+            window.saveAs(blob, 'my-node.png');
+        });
+    setTimeout(() => {
+      titulogrid.style.transform = 'translateX(-0px)'
+    }, 10);
+  }
+
+  function mudarcor1(){
+    var cormain = document.getElementById('cor1').value
+    document.getElementById('maingrid').style.backgroundColor = cormain
+  }
+
+  function mudarcor2() {
+    var corgrid = document.getElementById('cor2').value
+    var gad = document.getElementsByClassName('grid-stack')[0]
+    gad.style.backgroundColor = corgrid
+  }
+
+  function mudarcortitulo(){
+    var cortit = document.getElementById('cortitulo').value
+    document.getElementById('tituloid').style.color = cortit
+    document.querySelector('h2').style.color = cortit
+    document.querySelector('h3').style.color = cortit
+  }
+  
+  function refresh(){
+    var arquivo = document.querySelectorAll('.inptimage')
+    arquivo.forEach(function(bloco) {
+      bloco.addEventListener('change', function(){
+        var urlimg = URL.createObjectURL(bloco.files[0]);
+        bloco.parentNode.style.backgroundImage = `url(${urlimg})`
+      })
+    })
+  }
+
+  function clique(linkelement){
+    linkelement.parentNode.previousElementSibling.click()
+  }
+
+  function remover(){
+    grid.removeWidget('pogg')
+  }
+
+  function removeall() {
+    grid.removeAll()
+  }
+
+  function add() {
+    grid.addWidget({w: 1, content:'<input type="file" name="aaa" accept="image/*" class="inptimage" onchange="refresh()">  <div class="hide"><span id="upload" class="material-symbols-outlined" onclick="clique(this)">upload</span></div> <input type="text" name="" class="imgtext">'});
+    refresh()
+  }
+
+  function deletegrid() {
+    removeall()
+    grid.destroy(false)
+    document.querySelector('div#criador').style.display = 'block'
+    document.querySelector('div#maingrid').style.display = 'none'
+    document.querySelector('div#controles').style.display = 'none'
+  }
+
+  function criar(){
+    if(numcol.value == 0 || numcol.value > 8 || numlin.value == 0 || numlin.value > 8){
+      window.alert('Valor invalido')
+    } else {
+    document.querySelector('div#criador').style.display = 'none'
+    document.querySelector('div#maingrid').style.display = 'block'
+    document.querySelector('div#controles').style.display = 'flex'
+
+    if(numcol.value == 4) {
+      document.getElementById('maingrid').style.width = '550px'
+    }
+
+    if(numcol.value == 5) {
+      document.getElementById('maingrid').style.width = '650px'
+    }
+    
+    if(numcol.value >= 6) {
+      document.getElementById('maingrid').style.width = '700px'
+    }
+
+    grid = GridStack.init({column: numcol.value, row: numlin.value, float: true, removable: '#trash', resizable: {handles: 'all'}})
+    grid.addWidget({w: 1, content:'<input type="file" name="aaa" accept="image/*" class="inptimage" onchange="refresh()">  <div class="hide"><span id="upload" class="material-symbols-outlined" onclick="clique(this)">upload</span></div> <input type="text" name="" class="imgtext">'});
+    refresh()
+    }
+  }
+
+</script> 
+    
+</body> 
+</html>
